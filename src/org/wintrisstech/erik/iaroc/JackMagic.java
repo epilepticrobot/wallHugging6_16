@@ -1,5 +1,4 @@
 //once the beacon is detected, the robot stops.
-
 package org.wintrisstech.erik.iaroc;
 
 import android.os.SystemClock;
@@ -80,23 +79,45 @@ public class JackMagic extends Ferrari
      */
     public void run()
     {
-        dashboard.speak("i am jack version 5");
         try
         {
-            //StateControllerInterface jackStateController = new StateControllerVic(delegate, dashboard);
-            //jackStateController.startStateController();
-            StateControllerInterface jackStateController = new StateControllerJackBasic(delegate, dashboard);
-            jackStateController.startStateController();
-            //wallHugger();
-            //readBeacon();
-        } catch (Exception ex)
+            driveDirect(20, -20);
+        } catch (ConnectionLostException ex)
         {
-            dashboard.log("problem: " + ex.getMessage());
+            Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dashboard.log("Run completed.");
-        setRunning(false);
-        shutDown();
-        setRunning(false);
+        try
+        {
+            readSensors(SENSORS_GROUP_ID6);//Resets all counters in the Create to 0
+        } catch (ConnectionLostException ex)
+        {
+            Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        dashboard.speak("i am jack version 10");
+        
+        int angle = getAngle();
+        while (true)
+        {
+            dashboard.log(angle + "");
+          SystemClock.sleep(1000);
+            angle = getAngle();
+        }
+//        try
+//        {
+//            //StateControllerInterface jackStateController = new StateControllerVic(delegate, dashboard);
+//            //jackStateController.startStateController();
+//            StateControllerInterface jackStateController = new StateControllerJackBasic(delegate, dashboard);
+//            jackStateController.startStateController();
+//            //wallHugger();
+//            //readBeacon();
+//        } catch (Exception ex)
+//        {
+//            dashboard.log("problem: " + ex.getMessage());
+//        }
+//        dashboard.log("Run completed.");
+//        setRunning(false);
+//        shutDown();
+//        setRunning(false);
     }
 
     private void wallHugger()
@@ -120,7 +141,6 @@ public class JackMagic extends Ferrari
             }
         }
     }
-
 //    public void readBeacon()
 //    {
 //        try
