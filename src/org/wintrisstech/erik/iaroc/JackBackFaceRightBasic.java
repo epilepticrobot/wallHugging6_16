@@ -15,49 +15,72 @@ import org.wintrisstech.irobot.ioio.IRobotCreateInterface;
  *
  * @author Rob
  */
-class JackBackFaceRightBasic extends IRobotCreateAdapter implements JackState {
-
+class JackBackFaceRightBasic extends IRobotCreateAdapter implements JackState
+{
     StateControllerJackBasic controller;
 
-    public JackBackFaceRightBasic(IRobotCreateInterface delegate, StateControllerJackBasic controller) {
+    public JackBackFaceRightBasic(IRobotCreateInterface delegate, StateControllerJackBasic controller)
+    {
         super(delegate);
         this.controller = controller;
     }
 
-    public JackState bothBump() {
-        if (Math.random() < .5) {
+    public JackState bothBump()
+    {
+        if (Math.random() < .5)
+        {
             return leftBump();
-        } else {
+        } else
+        {
             return rightBump();
         }
     }
 
-    public JackState leftBump() {
+    public JackState leftBump()
+    {
         return controller.BACKFACERIGHT;
     }
 
-    public JackState rightBump() {
+    public JackState rightBump()
+    {
         return controller.BACKFACELEFT;
     }
 
-    public JackState noBump() {
+    public JackState noBump()
+    {
         return controller.FORWARD;
     }
 
-    public JackState action() {
-        try {
-            driveDirect(-300, -100);
+    public JackState action()
+    {
+        try
+        {
+            controller.getDashboard().log("backing up, face right");
+            controller.getDashboard().speak("backing up, face right");
+            driveDirect(-100, -300);
             SystemClock.sleep(300);
-        } catch (ConnectionLostException ex) {
+        } catch (ConnectionLostException ex)
+        {
             Logger.getLogger(JackBackFaceLeftBasic.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (isBumpLeft() && isBumpRight()) {
+        try
+        {
+            readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+        } catch (ConnectionLostException ex)
+        {
+            Logger.getLogger(JackBackFaceRightBasic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (isBumpLeft() && isBumpRight())
+        {
             return bothBump();
-        } else if (isBumpLeft()) {
+        } else if (isBumpLeft())
+        {
             return leftBump();
-        } else if (isBumpRight()) {
+        } else if (isBumpRight())
+        {
             return rightBump();
-        } else {
+        } else
+        {
             return noBump();
         }
 

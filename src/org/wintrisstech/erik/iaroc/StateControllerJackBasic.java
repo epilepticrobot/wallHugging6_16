@@ -17,6 +17,7 @@ public class StateControllerJackBasic extends IRobotCreateAdapter implements Sta
     public final JackState FORWARD;
     public final JackState BACKFACELEFT;
     public final JackState BACKFACERIGHT;
+    public final JackState BEACONDOCK;
     public final JackState FINAL;
     
     private final Dashboard dashboard;
@@ -30,6 +31,7 @@ public class StateControllerJackBasic extends IRobotCreateAdapter implements Sta
         FORWARD       = new JackForwardBasic(delegate, this);
         BACKFACELEFT  = new JackBackFaceLeftBasic(delegate, this);
         BACKFACERIGHT = new JackBackFaceRightBasic(delegate, this);
+        BEACONDOCK    = new JackBeaconDock(delegate, this);
         FINAL         = new JackFinal(delegate, this);
 
         state = FORWARD;

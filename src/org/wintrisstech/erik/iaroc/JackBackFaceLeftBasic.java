@@ -17,6 +17,7 @@ import org.wintrisstech.irobot.ioio.IRobotCreateInterface;
  */
 class JackBackFaceLeftBasic extends IRobotCreateAdapter implements JackState {
 
+
     StateControllerJackBasic controller;
 
     // Go Back and End Facing Left
@@ -47,9 +48,18 @@ class JackBackFaceLeftBasic extends IRobotCreateAdapter implements JackState {
 
     public JackState action() {
         try {
-            driveDirect(-100, -300);
+              controller.getDashboard().log("backing up, face left");
+           controller.getDashboard().speak("backing up, face left");
+            driveDirect(-300, -100);
             SystemClock.sleep(300);
         } catch (ConnectionLostException ex) {
+            Logger.getLogger(JackBackFaceLeftBasic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try
+        {
+            readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+        } catch (ConnectionLostException ex)
+        {
             Logger.getLogger(JackBackFaceLeftBasic.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (isBumpLeft() && isBumpRight()) {

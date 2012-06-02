@@ -135,9 +135,8 @@ public class Dashboard extends IOIOActivity implements TextToSpeech.OnInitListen
                  * needed to establish connections to other peripherals, such as
                  * sensors that are not part of the iRobot Create.
                  */
-                Lada kalina = new Lada(ioio, iRobotCreate, Dashboard.this);
-                kalina.initialize();
-                
+//                Lada kalina = new Lada(ioio, iRobotCreate, Dashboard.this);
+//                kalina.initialize();
                 JackMagic ferrari = new JackMagic(ioio, iRobotCreate, Dashboard.this);
                 ferrari.run();
             }
