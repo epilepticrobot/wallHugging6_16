@@ -79,9 +79,38 @@ public class JackMagic extends Ferrari
      */
     public void run()
     {
+        dashboard.speak("i am jack version 10");
+        int distance = 0;
+        int angle = 0;
+        while (distance < 600)
+        {
+            try
+            {
+                driveDirect(100, 200);
+                readSensors(SENSORS_GROUP_ID6);
+                distance = getDistance() + distance;
+                angle = getAngle() + angle;
+            } catch (ConnectionLostException ex)
+            {
+                Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        while (angle > 0)
+        {
+            try
+            {
+                readSensors(SENSORS_GROUP_ID6);
+                angle = getAngle() + angle;
+                driveDirect(100, -100);
+
+            } catch (ConnectionLostException ex)
+            {
+                Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         try
         {
-            driveDirect(20, -20);
+            driveDirect(0, 0);
         } catch (ConnectionLostException ex)
         {
             Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,14 +122,22 @@ public class JackMagic extends Ferrari
         {
             Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
         }
-        dashboard.speak("i am jack version 10");
-        
-        int angle = getAngle();
+        distance = getDistance();
+        angle = getAngle();
         while (true)
         {
-            dashboard.log(angle + "");
-          SystemClock.sleep(1000);
+            dashboard.log(angle + "<-- angle");
+            dashboard.log(distance + "<-- distance");
+            SystemClock.sleep(1000);
+            try
+            {
+                readSensors(SENSORS_GROUP_ID6);
+            } catch (ConnectionLostException ex)
+            {
+                Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
+            }
             angle = getAngle();
+            distance = getDistance();
         }
 //        try
 //        {
