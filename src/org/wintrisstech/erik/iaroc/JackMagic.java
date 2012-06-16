@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import dalvik.bytecode.Opcodes;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.exception.ConnectionLostException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.wintrisstech.irobot.ioio.IRobotCreateInterface;
@@ -79,7 +80,14 @@ public class JackMagic extends Ferrari
      */
     public void run()
     {
-        dashboard.speak("i am jack version 10");
+        
+        dashboard.speak("i am jack version 11");
+        try
+        {
+            timedWallHugging();
+        } catch (ConnectionLostException ex)
+        {
+        }
         int distance = 0;
         int angle = 0;
         while (distance < 600)
@@ -92,7 +100,6 @@ public class JackMagic extends Ferrari
                 angle = getAngle() + angle;
             } catch (ConnectionLostException ex)
             {
-                Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         while (angle > 0)
@@ -102,10 +109,9 @@ public class JackMagic extends Ferrari
                 readSensors(SENSORS_GROUP_ID6);
                 angle = getAngle() + angle;
                 driveDirect(100, -100);
-
+                
             } catch (ConnectionLostException ex)
             {
-                Logger.getLogger(JackMagic.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         try
@@ -156,28 +162,342 @@ public class JackMagic extends Ferrari
 //        shutDown();
 //        setRunning(false);
     }
+//
+//    private void wallHugger()
+//    {
+//
+//        dashboard.speak("hugging wall");
+//        while (true)
+//        {
+//            try
+//            {
+//                readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+//                driveDirect(500, 500);
+//                if (isBumpRight())
+//                {
+//                    driveDirect(-500, 500);
+//                    SystemClock.sleep(300);
+//                    driveDirect(500, 500);
+//                }
+//            } catch (ConnectionLostException ex)
+//            {
+//            }
+//        }
+//    }
+//    
 
     private void wallHugger()
     {
-
+        
+        
+        
+        
         dashboard.speak("hugging wall");
+        
+        
         while (true)
         {
+            
+            
             try
             {
+                
+                
                 readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+                
+                
                 driveDirect(500, 500);
+
+
+                //keep turning until it finds another bump
+
+                
+                
+                
                 if (isBumpRight())
                 {
-                    driveDirect(-500, 500);
-                    SystemClock.sleep(300);
-                    driveDirect(500, 500);
+                    
+                    
+                    turnLeft();
+                    
+                    
+                    
+                    
                 }
+                
+                
             } catch (ConnectionLostException ex)
             {
             }
+            
+            
         }
+        
+        
     }
+    
+    private void turnLeft() throws ConnectionLostException
+    {
+        
+        
+        
+        
+        readSensors(SENSORS_ANGLE);
+        
+        
+        int currentDegree = getAngle();
+        
+        
+       
+        dashboard.log("" + currentDegree);
+        
+        while (currentDegree > -90 && currentDegree < 0)
+        {
+             
+
+
+            dashboard.log("in while loop" + currentDegree);
+
+            
+            driveDirect(100, 250);
+            SystemClock.sleep(1000);
+
+            
+            readSensors(SENSORS_ANGLE);
+            
+            
+            currentDegree = currentDegree + getAngle();
+          
+            
+            
+            
+        }
+        
+        
+    }
+    
+    private void joonsWallHugger() throws ConnectionLostException
+    {
+        
+        
+        dashboard.log("joon");
+        
+        
+        while (true)
+        {
+
+
+            //if it has been away from the wall for more than a second, curve to the left, until it hits the wall again
+
+            
+            int lastNewSecond = Calendar.getInstance().get(Calendar.SECOND);
+            
+            
+            while (true)
+            {
+                
+                
+                readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+                
+                
+                dashboard.log("in joonswallhugger");
+                
+                
+                if (Calendar.getInstance().get(Calendar.SECOND) == lastNewSecond + 2)
+                {
+                    
+                    
+                    lastNewSecond = Calendar.getInstance().get(Calendar.SECOND);
+                    
+                    
+                    dashboard.speak("" + lastNewSecond);
+                    
+                    
+                    dashboard.log("//" + lastNewSecond);
+                    
+                    
+                    if (!isBumpLeft())
+                    {
+                        
+                        
+                        
+                        
+                        dashboard.log("turning");
+                        
+                        
+                        turn(5);
+                        
+                        
+                    }
+                    
+                    
+                    
+                    
+                }
+                
+                
+            }
+            
+            
+            
+            
+        }
+        
+        
+    }
+    
+    private void timedWallHugging() throws ConnectionLostException
+    {
+        
+        
+        
+        
+        while (true)
+        {
+            
+            
+            driveDirect(100, 100);
+            
+            
+            readSensors(SENSORS_BUMPS_AND_WHEEL_DROPS);
+            
+            if(isBumpLeft()&&isBumpRight())
+            {
+                driveDirect(-200, -200);
+                SystemClock.sleep(1000);
+                driveDirect(100, 250);
+                SystemClock.sleep(1000);
+            }
+            
+            if (isBumpRight())
+            {
+                
+                
+                turnLeft();
+                
+                
+                dashboard.log("turning left");
+                
+                
+                dashboard.speak("left");
+                
+                
+                driveDirect(100, 100);
+                
+                
+                SystemClock.sleep(2000);
+                
+                
+                
+                
+                turnRight();
+                
+                
+                dashboard.log("turning right");
+                
+                
+                dashboard.speak("right");
+                
+                
+            }
+            
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+        
+    }
+    
+    public void turn(int degreesToTurn) throws ConnectionLostException
+    {
+
+
+        //driveDirect(200, -200);
+
+        
+        int totalAngleTurned = 0;
+        
+        
+        while (totalAngleTurned < degreesToTurn)
+        {
+            
+            
+            readSensors(SENSORS_ANGLE);
+            
+            
+            totalAngleTurned += getAngle();
+            
+            
+        }
+        
+        
+        
+        
+    }
+    
+    private void turnSpecifiedDegree() throws ConnectionLostException
+    {
+        
+        
+        
+        
+        int currentDegree = getAngle();
+        
+        
+        readSensors(SENSORS_ANGLE);
+        
+        
+        dashboard.log("turning specified degree");
+        
+        
+        while (true)
+        {
+            
+            
+            readSensors(SENSORS_ANGLE);
+
+
+            //while not at 10 degrees
+
+            
+            while (currentDegree > -10)
+            {
+                
+                
+                driveDirect(-500, 500);
+                
+                
+                readSensors(SENSORS_ANGLE);
+                
+                
+                currentDegree = +getAngle();
+                
+                
+                dashboard.log("" + currentDegree);
+                
+                
+            }
+            
+            
+            driveDirect(0, 0);
+            
+            
+            dashboard.log("stop");
+
+
+            //keep turning
+
+            
+        }
+        
+        
+    }
+
 //    public void readBeacon()
 //    {
 //        try
@@ -203,5 +523,69 @@ public class JackMagic extends Ferrari
 //            dashboard.log("Reading infrared sensors!");
 //        }
 //    }
+    private void turnRight() throws ConnectionLostException
+    {
+        
+        
+        
+        
+        readSensors(SENSORS_ANGLE);
+        
+        
+        int currentDegree = getAngle();
+        
+        
+        dashboard.log("current degree = " + currentDegree);
+        
+        
+        while (currentDegree < 90)
+        {
+
+
+            //dashboard.log("in while loop");
+
+            
+            driveDirect(250,100);
+            
+            
+            readSensors(SENSORS_ANGLE);
+            
+            
+            currentDegree = currentDegree + getAngle();
+            
+            
+            
+            
+        }
+        
+        
+    }
 }
+//    public void readBeacon()
+//    {
+//        try
+//        {
+//            dashboard.log("hahahahhah");
+//            dashboard.speak("Ha Ha Ha Ha Ha");
+//            readSensors(SENSORS_INFRARED_BYTE);
+//            if (getInfraredByte() != 255)
+//            {
+//                dashboard.log("Sensing Sensing Sensing");
+//                dashboard.speak("Sensing Sensing Sensing");
+//                this.demo(1);
+//            }
+//            //    private static final int RED_BUOY_CODE = 248;
+//            //    private static final int GREEN_BUOY_CODE = 244;
+//            //    private static final int FORCE_FIELD_CODE = 242;
+//            //    private static final int BOTH_BUOY_CODE = 252;
+//            //    private static final int BOTH_BUOY_FORCE_FIELD_CODE = 254;
+//            //    private static final int GREEN_BUOY_FORCE_FIELD_CODE = 246;
+//            //    private static final int BOTH_BUOY_FORCE_FIELD_CODE = 254;
+//        } catch (ConnectionLostException ex)
+//        {
+//            dashboard.log("Reading infrared sensors!");
+//        }
+//    }
+
 //hello people
+
